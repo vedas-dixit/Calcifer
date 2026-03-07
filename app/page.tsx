@@ -2,16 +2,17 @@
 
 import { useEffect, useRef, useState } from "react";
 import { storage } from "@/app/lib/storage";
-import { MOCK_RESULT } from "@/app/lib/mock";
+import { runAgent } from "@/app/lib/agent";
 import { ApiKeyModal } from "@/app/components/ApiKeyModal";
 import { MainApp } from "@/app/components/MainApp";
 import { ProgressView } from "@/app/components/ProgressView";
 import { OutputView } from "@/app/components/OutputView";
 import { SettingsFab } from "@/app/components/SettingsFab";
-import type { AppPhase, AnalysisMode, AgentResult } from "@/app/lib/types";
+import type { AppPhase, AnalysisMode, AgentResult, AgentProgress } from "@/app/lib/types";
 
 interface AppState {
   phase: AppPhase;
+  progress?: AgentProgress;
   result?: AgentResult;
   error?: string;
 }
@@ -19,13 +20,6 @@ interface AppState {
 export default function Home() {
   // "loading" avoids SSR / client hydration mismatch with localStorage
   const [state, setState] = useState<AppState>({ phase: "loading" });
-
-  // Store the pending request so the real agent can pick it up later
-  const pendingRef = useRef<{
-    url: string;
-    mode: AnalysisMode;
-    focus: string;
-  } | null>(null);
 
   // Read localStorage only after mount (client-only)
   const initialised = useRef(false);
@@ -44,17 +38,29 @@ export default function Home() {
   }
 
   function handleIgnite(url: string, mode: AnalysisMode, focus: string) {
-    pendingRef.current = { url, mode, focus };
-    // TODO: wire real agent – pendingRef.current holds url / mode / focus
-    setState((prev) => ({ ...prev, phase: "processing" }));
-  }
+    setState({ phase: "processing", progress: undefined });
 
-  function handleMockComplete() {
-    setState({ phase: "output", result: MOCK_RESULT });
+    runAgent({
+      url,
+      mode,
+      focus,
+      onProgress: (progress) => {
+        setState((prev) => ({ ...prev, progress }));
+      },
+    })
+      .then((result) => {
+        setState({ phase: "output", result });
+      })
+      .catch((err: unknown) => {
+        const message =
+          err instanceof Error
+            ? err.message
+            : "Something went wrong. The fire went out.";
+        setState({ phase: "error", error: message });
+      });
   }
 
   function handleReset() {
-    pendingRef.current = null;
     setState({ phase: "main" });
   }
 
@@ -94,7 +100,7 @@ export default function Home() {
       {state.phase === "main" && <MainApp onIgnite={handleIgnite} />}
 
       {state.phase === "processing" && (
-        <ProgressView onMockComplete={handleMockComplete} />
+        <ProgressView live={state.progress} />
       )}
 
       {state.phase === "output" && state.result && (
@@ -118,7 +124,8 @@ export default function Home() {
             style={{
               color: "var(--color-ember-coral)",
               fontSize: "13px",
-              maxWidth: "400px",
+              maxWidth: "440px",
+              lineHeight: "1.7",
             }}
           >
             {state.error ?? "Something went wrong. The fire went out."}
