@@ -1,0 +1,24 @@
+CodeFire
+Feed me a repo. I'll light the way.
+
+🔑 Set your Gemini API key first
+mission.config
+GitHub Repository URL
+https://github.com/owner/repo
+What should I cook?
+
+📄
+Full Documentation
+Architecture + guides + getting started
+
+🤝
+Contribution Guide
+Find good first issues & entry points
+
+🔍
+Bug Hunt
+Find potential bugs & improvements
+Specific focus area (optional)
+e.g., frontend only, auth module, API routes...
+🔥 Ignite
+Your API key never leaves your brow
