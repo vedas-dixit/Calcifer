@@ -158,6 +158,9 @@ export async function runAgent(opts: AgentOptions): Promise<AgentResult> {
 
     // Each round of file fetching becomes a new visible step
     // Percent: 50 → 85 spread across up to 7 rounds (~5% per round)
+    // Build a fast lookup set of all known blob paths
+    const knownPaths = new Set(blobs.map((b) => b.path));
+
     const output = await runAgentLoop({
       systemPrompt: buildSystemPrompt(mode, focus),
       model: storage.getModel(),
@@ -173,11 +176,23 @@ export async function runAgent(opts: AgentOptions): Promise<AgentResult> {
 
       fetchFiles: async (paths) => {
         const results: Array<{ path: string; content: string }> = [];
+        const notInTree: string[] = [];
+        const fetchFailed: string[] = [];
+
         for (const path of paths) {
+          if (!knownPaths.has(path)) {
+            notInTree.push(path);
+            continue;
+          }
           const content = await fetchRawContent(owner, repo, branch, path);
-          if (content !== null) results.push({ path, content });
+          if (content !== null) {
+            results.push({ path, content });
+          } else {
+            fetchFailed.push(path);
+          }
         }
-        return results;
+
+        return { files: results, notInTree, fetchFailed };
       },
 
       onToolCall: (reason, paths, round) => {
