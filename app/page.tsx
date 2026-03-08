@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { storage } from "@/app/lib/storage";
 import { runAgent } from "@/app/lib/agent";
-import { toast } from "@/app/lib/toast";
+
 import { ApiKeyModal } from "@/app/components/ApiKeyModal";
 import { MainApp } from "@/app/components/MainApp";
 import { ProgressView } from "@/app/components/ProgressView";
@@ -23,6 +23,7 @@ interface AppState {
   needsSetup: boolean;
   progress?: AgentProgress;
   result?: AgentResult;
+  progressError?: string;
 }
 
 interface Windows {
@@ -75,7 +76,7 @@ export default function Home() {
   }
 
   function handleIgnite(url: string, mode: AnalysisMode, focus: string) {
-    setState((prev) => ({ ...prev, phase: "processing", progress: undefined }));
+    setState((prev) => ({ ...prev, phase: "processing", progress: undefined, progressError: undefined }));
     setWindows({ mission: false, progress: true, report: false });
 
     runAgent({
@@ -93,9 +94,8 @@ export default function Home() {
       .catch((err: unknown) => {
         const message =
           err instanceof Error ? err.message : "Something went wrong. The fire went out.";
-        toast.error(message);
-        setState((prev) => ({ ...prev, phase: "idle" }));
-        setWindows((prev) => ({ ...prev, progress: false }));
+        setState((prev) => ({ ...prev, phase: "idle", progressError: message }));
+        setWindows((prev) => ({ ...prev, progress: true }));
       });
   }
 
@@ -137,7 +137,7 @@ export default function Home() {
       <Toaster />
       <SettingsFab />
 
-      {/* Faint desktop watermark — chars ignite left to right */}
+      {/* Watermark — always visible, animates only while agent is working */}
       <div
         style={{
           position: "fixed",
@@ -160,23 +160,36 @@ export default function Home() {
             display: "inline-flex",
           }}
         >
-          {"CALCIFER".split("").map((char, i) => (
-            <span
-              key={i}
-              style={{
-                animation: `char-ignite 4s ease-in-out infinite`,
-                animationDelay: `${i * 0.3}s`,
-                animationFillMode: "both",
-                display: "inline-block",
-              }}
-            >
-              {char}
-            </span>
-          ))}
+          {"CALCIFER".split("").map((char, i) =>
+            state.phase === "processing" ? (
+              <span
+                key={i}
+                style={{
+                  animation: `char-ignite 4s ease-in-out infinite`,
+                  animationDelay: `${i * 0.3}s`,
+                  animationFillMode: "both",
+                  display: "inline-block",
+                }}
+              >
+                {char}
+              </span>
+            ) : (
+              <span
+                key={i}
+                style={{
+                  display: "inline-block",
+                  opacity: 0.035,
+                  color: "var(--color-ember-amber)",
+                }}
+              >
+                {char}
+              </span>
+            )
+          )}
         </span>
       </div>
 
-      {state.phase === "processing" && <FireworksOverlay active />}
+      {hasResult && windows.report && <FireworksOverlay active />}
 
       {windows.mission && (
         state.needsSetup ? (
@@ -196,6 +209,7 @@ export default function Home() {
       {windows.progress && (
         <ProgressView
           live={state.progress}
+          error={state.progressError}
           onClose={() => setWindows((prev) => ({ ...prev, progress: false }))}
           onMinimize={() => setWindows((prev) => ({ ...prev, progress: false }))}
         />

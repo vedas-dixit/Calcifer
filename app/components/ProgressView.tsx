@@ -9,6 +9,8 @@ import type { StepLog, AgentProgress } from "@/app/lib/types";
 interface ProgressViewProps {
   /** When provided, renders live progress from the real agent. */
   live?: AgentProgress;
+  /** When provided, shows an error state in the terminal. */
+  error?: string;
   /** Called after the mock animation completes (demo mode). */
   onMockComplete?: () => void;
   onClose?: () => void;
@@ -18,7 +20,7 @@ interface ProgressViewProps {
 /* Time between each step appearing (ms) — feels snappy but not instant */
 const STEP_DELAY = 900;
 
-export function ProgressView({ live, onMockComplete, onClose, onMinimize }: ProgressViewProps) {
+export function ProgressView({ live, error, onMockComplete, onClose, onMinimize }: ProgressViewProps) {
   const [visibleSteps, setVisibleSteps] = useState<StepLog[]>([]);
   const [percent, setPercent] = useState(0);
   const terminalRef = useRef<HTMLDivElement>(null);
@@ -71,6 +73,7 @@ export function ProgressView({ live, onMockComplete, onClose, onMinimize }: Prog
 
   const currentStep = visibleSteps.at(-1);
   const isComplete = percent >= 100;
+  const hasFailed = !!error;
 
   return (
     <DraggableWindow
@@ -122,7 +125,7 @@ export function ProgressView({ live, onMockComplete, onClose, onMinimize }: Prog
               marginTop: "2px",
             }}
           >
-            {isComplete ? "Mission complete." : "Igniting..."}
+            {hasFailed ? "Mission failed." : isComplete ? "Mission complete." : "Igniting..."}
           </p>
         </div>
       </div>
@@ -163,7 +166,16 @@ export function ProgressView({ live, onMockComplete, onClose, onMinimize }: Prog
           />
         )}
 
-        {isComplete && (
+        {hasFailed && (
+          <div
+            className="term-line animate-type-in"
+            style={{ marginTop: "8px", color: "var(--color-ember-red, #e05c5c)" }}
+          >
+            ✗ {error}
+          </div>
+        )}
+
+        {isComplete && !hasFailed && (
           <div
             className="term-line term-line--ok animate-type-in"
             style={{ marginTop: "8px" }}
@@ -202,14 +214,18 @@ export function ProgressView({ live, onMockComplete, onClose, onMinimize }: Prog
           </span>
           <span
             style={{
-              color: isComplete ? "var(--color-ember-amber)" : "var(--color-ember-dim)",
+              color: hasFailed
+                ? "var(--color-ember-red, #e05c5c)"
+                : isComplete
+                ? "var(--color-ember-amber)"
+                : "var(--color-ember-dim)",
               fontSize: "10px",
               letterSpacing: "0.06em",
-              fontWeight: isComplete ? 600 : 400,
+              fontWeight: hasFailed || isComplete ? 600 : 400,
               transition: "color 0.3s",
             }}
           >
-            {isComplete ? "Complete" : "Processing..."}
+            {hasFailed ? "Failed" : isComplete ? "Complete" : "Processing..."}
           </span>
         </div>
       </div>
