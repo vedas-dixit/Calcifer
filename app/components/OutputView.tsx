@@ -18,6 +18,7 @@ const MODE_LABEL: Record<AnalysisMode, string> = {
   documentation: "FULL DOCS",
   contribution: "CONTRIB GUIDE",
   bugs: "BUG HUNT",
+  skillmatch: "SKILL MATCH",
 };
 
 export function OutputView({ result, onReset, onClose, onMinimize }: OutputViewProps) {

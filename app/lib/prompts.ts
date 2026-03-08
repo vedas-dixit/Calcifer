@@ -1,4 +1,4 @@
-import type { AnalysisMode, RepoMetadata } from "./types";
+import type { AnalysisMode, RepoMetadata, SkillProfile } from "./types";
 import type { GoodFirstIssue } from "./github";
 
 // ---------------------------------------------------------------------------
@@ -164,6 +164,44 @@ Code style, test coverage, docs — based on actual codebase patterns.
 Where to ask questions. How to ask well.`.trim();
 }
 
+function skillMatchSystemPrompt(focus: string): string {
+  return `You are CALCIFER — a senior open source mentor who helps developers figure out exactly where they fit in a codebase. You know how overwhelming it is to stare at an unfamiliar repo. Your job is to cut through that and give someone a precise, personalized entry point based on their specific skills.
+
+${SHARED_TOOL_INSTRUCTIONS}
+
+## Your Mission
+
+The user has provided their skill profile (languages, frameworks, experience level, and what kind of contributions they want to make). Your job is to analyze this repo and map it against their profile — telling them exactly what they can contribute, where to start, and what the gap looks like.
+${focus ? `\nFocus especially on: **${focus}**` : ""}
+
+## Report Format
+
+Your plain text markdown report must follow this structure:
+
+**Match Score**
+One line: "🔥🔥🔥 Strong Match" / "🔥🔥 Decent Match" / "🔥 Partial Match" / "🌱 Learning Opportunity"
+One sentence explaining why.
+
+**What You Can Tackle Right Now**
+List 3-5 specific, concrete things this developer can contribute to immediately given their skills. Reference actual files, modules, or patterns from the code. Not generic — specific.
+
+**Your Best Entry Points**
+The 2-3 files they should read first. For each: what it does, why it's approachable, what they'll learn from it.
+
+**Open Issues You Can Pick Up**
+From the good first issues list, pick the 2-3 that best match their skills. For each: why it's a good fit, which files they'd touch, rough approach.
+If no issues listed, suggest 2-3 concrete contribution ideas that match their profile.
+
+**Skill Gap**
+What would they need to learn to go deeper into this repo? Be honest but encouraging. Keep it to 2-3 things max.
+
+**Your First Week Plan**
+A concrete 5-step plan: Day 1-2: set up and read X. Day 3: understand Y. Day 4-5: attempt Z. Specific to this repo and their skill level.
+
+**One Thing to Watch Out For**
+The single biggest gotcha or stumbling block for someone with their background in this codebase.`.trim();
+}
+
 export function buildSystemPrompt(mode: AnalysisMode, focus: string): string {
   switch (mode) {
     case "bugs":
@@ -172,6 +210,8 @@ export function buildSystemPrompt(mode: AnalysisMode, focus: string): string {
       return documentationSystemPrompt(focus);
     case "contribution":
       return contributionSystemPrompt(focus);
+    case "skillmatch":
+      return skillMatchSystemPrompt(focus);
   }
 }
 
@@ -179,13 +219,40 @@ export function buildSystemPrompt(mode: AnalysisMode, focus: string): string {
 // Initial message — the repo map fed to the agent as its starting context
 // ---------------------------------------------------------------------------
 
+function formatSkillProfile(profile: SkillProfile): string {
+  const expLabels: Record<SkillProfile["experience"], string> = {
+    "first-timer": "First-time open source contributor",
+    "some-prs": "Has made a few open source PRs",
+    "regular": "Regular open source contributor",
+  };
+  const lines = [
+    "## Developer Skill Profile",
+    `Experience: ${expLabels[profile.experience]}`,
+  ];
+  if (profile.languages.length > 0) {
+    lines.push("\nLanguages:");
+    for (const l of profile.languages) lines.push(`- ${l.name} (${l.level})`);
+  }
+  if (profile.frameworks.length > 0) {
+    lines.push(`\nFrameworks & Tools: ${profile.frameworks.join(", ")}`);
+  }
+  if (profile.domains.length > 0) {
+    lines.push(`\nDomain interests: ${profile.domains.join(", ")}`);
+  }
+  if (profile.goals.length > 0) {
+    lines.push(`\nContribution goals: ${profile.goals.join(", ")}`);
+  }
+  return lines.join("\n");
+}
+
 export function buildInitialMessage(
   mode: AnalysisMode,
   metadata: RepoMetadata,
   treeStr: string,
   symbolMap: string,
   focus: string,
-  goodFirstIssues: GoodFirstIssue[]
+  goodFirstIssues: GoodFirstIssue[],
+  skillProfile?: SkillProfile
 ): string {
   const meta = [
     `Repository: ${metadata.owner}/${metadata.repo}`,
@@ -213,7 +280,13 @@ export function buildInitialMessage(
       "Build a complete understanding of the architecture. Start with entry points and work outward.",
     contribution:
       "Understand how a newcomer would navigate this codebase. Focus on setup, entry points, and contribution workflow.",
+    skillmatch:
+      "Map this repo's tech stack and contribution opportunities against the developer's skill profile. Be specific and personal.",
   };
+
+  const skillBlock = skillProfile
+    ? `\n${formatSkillProfile(skillProfile)}\n`
+    : "";
 
   return `## Repository Info
 ${meta}
@@ -228,7 +301,7 @@ These are the top-scored files with their extracted symbols — use this to deci
 
 ${symbolMap || "(No symbols extracted — repo may use an unsupported language)"}
 ${issuesBlock}
-
+${skillBlock}
 ---
 
 Mission: ${modeContext[mode]}

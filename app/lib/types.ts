@@ -1,4 +1,20 @@
-export type AnalysisMode = "documentation" | "contribution" | "bugs";
+export type AnalysisMode = "documentation" | "contribution" | "bugs" | "skillmatch";
+
+export type SkillLevel = "learning" | "familiar" | "strong";
+
+export interface SkillLanguage {
+  id: string;
+  name: string;
+  level: SkillLevel;
+}
+
+export interface SkillProfile {
+  experience: "first-timer" | "some-prs" | "regular";
+  languages: SkillLanguage[];
+  frameworks: string[];
+  domains: string[];
+  goals: string[];
+}
 
 export type AppPhase =
   | "loading"

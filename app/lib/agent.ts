@@ -9,7 +9,7 @@ import { extractSymbols, formatSymbolSummary } from "./symbols";
 import { buildSystemPrompt, buildInitialMessage } from "./prompts";
 import { runAgentLoop } from "./gemini";
 import { storage } from "./storage";
-import type { AnalysisMode, AgentResult, AgentProgress, StepLog } from "./types";
+import type { AnalysisMode, AgentResult, AgentProgress, StepLog, SkillProfile } from "./types";
 
 // ---------------------------------------------------------------------------
 // Agent options
@@ -19,6 +19,7 @@ export interface AgentOptions {
   url: string;
   mode: AnalysisMode;
   focus: string;
+  skillProfile?: SkillProfile;
   onProgress: (progress: AgentProgress) => void;
 }
 
@@ -78,7 +79,7 @@ class ProgressTracker {
 // ---------------------------------------------------------------------------
 
 export async function runAgent(opts: AgentOptions): Promise<AgentResult> {
-  const { url, mode, focus, onProgress } = opts;
+  const { url, mode, focus, skillProfile, onProgress } = opts;
 
   const geminiKey = storage.getApiKey();
   if (!geminiKey) {
@@ -136,9 +137,9 @@ export async function runAgent(opts: AgentOptions): Promise<AgentResult> {
       }
     }
 
-    // ── Fetch good first issues for contribution mode ──
+    // ── Fetch good first issues for contribution + skillmatch modes ──
     let goodFirstIssues: Awaited<ReturnType<typeof fetchGoodFirstIssues>> = [];
-    if (mode === "contribution") {
+    if (mode === "contribution" || mode === "skillmatch") {
       tracker.push(
         "issues",
         "> Checking open issues...",
@@ -170,7 +171,8 @@ export async function runAgent(opts: AgentOptions): Promise<AgentResult> {
         treeStr,
         symbolLines.join("\n\n"),
         focus,
-        goodFirstIssues
+        goodFirstIssues,
+        skillProfile
       ),
       apiKey: geminiKey,
 
