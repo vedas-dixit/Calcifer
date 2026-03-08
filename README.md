@@ -14,34 +14,36 @@ Paste a URL. Pick a mode. Watch the fire think. Get a real, deep report.
 
 You've been there. You open a new GitHub repo, stare at 400 files, and have absolutely no idea where to start. Or you want to contribute to open source but can't figure out if you even have the right skills for it. Or you're doing a code review and need a second pair of eyes that doesn't get tired.
 
-Calcifer solves all of that. Drop in a repo URL, choose what you want to know, and it spins up a Gemini-powered agent that actually *reads the code* — not just the README — and gives you a structured, specific report.
+Intent is to solve all of that. Drop in a repo URL, choose what you want to know, and it spins up a Gemini-powered agent that actually *reads the code*, not just the README and gives you a structured, specific report.
 
 Four modes:
 
 - **Documentation** — What is this thing? How does it fit together? Give me a map.
 - **Contribution** — I want to help. Where do I start? What do I need to know?
 - **Bug Hunt** — Find real issues. Security gaps, logic errors, the stuff that slips through PR review.
-- **Skill Match** — *This one's my favorite.* Tell Calcifer your skills — languages, frameworks, experience level — and it matches you to the exact files and issues in that repo where you'd actually be useful.
+- **Skill Match** — *This one's my favorite.* Tell Calcifer your skills like languages, frameworks, experience level and it matches you to the exact files and issues in that repo where you'd actually be useful.
 
 ---
 
-## The agent part — how I thought about this
+## The agent part & how I thought about this
 
-This is the bit I'm most proud of.
+This is the bit I was most confused about but kinda proud of.
 
 Most "AI + GitHub" tools just throw the whole README at an LLM and ask it to summarize. That's not an agent — that's a prompt wrapper. I wanted something that actually *reasons* about the code, the way a real engineer would when onboarding to a new codebase.
+Easkier said then done but a lot of good prompting, learning control loops structure output got me here.
+I'm not the smartest but will do anything and will try everything to get there.
 
 Here's what Calcifer actually does under the hood:
 
 1. Fetches the full file tree and repo metadata from GitHub's API
 2. Scores every file by relevance to your chosen mode (bugs mode weights security-critical files differently than contribution mode)
-3. Extracts symbols from the top files using regex — functions, classes, exports — without burning API tokens on it
+3. Extracts symbols from the top files using regex: functions, classes, exports, without burning API tokens on it
 4. Hands that repo map to Gemini along with a system prompt that defines its mission
-5. Gemini then *decides* which files to actually read — using a `read_files` tool call
+5. Gemini then *decides* which files to actually read, using a `read_files` tool call
 6. The agent loops: read files → reason → read more files → reason → write report
 7. Up to 7 rounds, up to 60 files total, capped at 10KB per file to keep it honest
 
-The key thing I tried to get right: **the agent decides what to read, not me.** I just give it the map and the mission. It follows the code wherever it leads — entry points to core modules to edge cases — exactly like a real engineer would.
+The key thing I tried to get right: **the agent decides what to read, not me.** I just give it the map and the mission. It follows the code wherever it leads, entry points to core modules to edge cases — exactly like a real engineer would.
 
 I spent a lot of time on the prompts too. Each mode has a different persona and a different report structure. The skill match prompt basically tells Gemini to act as a mentor who knows both the codebase *and* the developer's background. That one surprised me with how well it works.
 
