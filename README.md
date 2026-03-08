@@ -29,7 +29,7 @@ Four modes:
 
 This is the bit I was most confused about but kinda proud of.
 
-Most "AI + GitHub" tools just throw the whole README at an LLM and ask it to summarize. That's not an agent — that's a prompt wrapper. I wanted something that actually *reasons* about the code, the way a real engineer would when onboarding to a new codebase.
+Most "AI + GitHub" tools just throw the whole README at an LLM and ask it to summarize. That's not an agent that's a prompt wrapper. I wanted something that actually *reasons* about the code, the way a real engineer would when onboarding to a new codebase.
 Easkier said then done but a lot of good prompting, learning control loops structure output got me here.
 I'm not the smartest but will do anything and will try everything to get there.
 
@@ -135,7 +135,7 @@ The retro macOS aesthetic wasn't an accident: vedasdixit.engineer. Idk why I lov
 
 ## License
 
-MIT — do whatever you want with it.
+MIT — Modify It Totally haha do whatever you want with it.
 
 ---
 
