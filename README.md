@@ -1,4 +1,4 @@
-# 🔥 Calcifer
+# Calcifer
 
 > *"I feel like I'm burning up from the inside."*
 > That's your codebase, every time someone new tries to understand it.
@@ -7,17 +7,8 @@
 
 Paste a URL. Pick a mode. Watch the fire think. Get a real, deep report.
 
----
+<img width="1051" height="583" alt="calcifer" src="https://github.com/user-attachments/assets/135fd767-0cb8-463f-8fb3-02ec70845cea" />
 
-<!-- DEMO VIDEO — add here -->
-<!-- [![Calcifer Demo](thumbnail.png)](your-video-link) -->
-
----
-
-<!-- SCREENSHOT — add here -->
-<!-- ![Calcifer UI](screenshot.png) -->
-
----
 
 ## What it actually does
 
@@ -146,4 +137,4 @@ MIT — do whatever you want with it.
 
 ---
 
-*Made with 🔥 in heart by Vedas*
+*Made with 🔥 by Vedas*
