@@ -1,6 +1,9 @@
+import type { SkillProfile } from "./types";
+
 const GEMINI_KEY = "CALCIFER_GEMINI_KEY";
 const GITHUB_KEY = "CALCIFER_GITHUB_KEY";
 const MODEL_KEY = "CALCIFER_MODEL";
+const SKILL_PROFILE_KEY = "CALCIFER_SKILL_PROFILE";
 
 export const DEFAULT_MODEL = "gemini-2.5-pro";
 
@@ -43,5 +46,24 @@ export const storage = {
 
   setModel(model: string): void {
     localStorage.setItem(MODEL_KEY, model);
+  },
+
+  getSkillProfile(): SkillProfile | null {
+    if (typeof window === "undefined") return null;
+    try {
+      const raw = localStorage.getItem(SKILL_PROFILE_KEY);
+      return raw ? (JSON.parse(raw) as SkillProfile) : null;
+    } catch {
+      return null;
+    }
+  },
+
+  setSkillProfile(profile: SkillProfile): void {
+    localStorage.setItem(SKILL_PROFILE_KEY, JSON.stringify(profile));
+  },
+
+  hasSkillProfile(): boolean {
+    if (typeof window === "undefined") return false;
+    return !!localStorage.getItem(SKILL_PROFILE_KEY);
   },
 };

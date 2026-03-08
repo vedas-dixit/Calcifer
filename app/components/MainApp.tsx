@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { DraggableWindow } from "./DraggableWindow";
 import { FireAnimation } from "./FireAnimation";
-import type { AnalysisMode } from "@/app/lib/types";
+import { storage } from "@/app/lib/storage";
+import { useSettings } from "@/app/lib/settings-store";
+import type { AnalysisMode, SkillProfile } from "@/app/lib/types";
 
 interface MainAppProps {
-  onIgnite: (url: string, mode: AnalysisMode, focus: string) => void;
+  onIgnite: (url: string, mode: AnalysisMode, focus: string, skillProfile?: SkillProfile) => void;
   onClose?: () => void;
   onMinimize?: () => void;
 }
@@ -37,9 +39,16 @@ const MODES: ModeOption[] = [
     label: "Bug Hunt",
     description: "Potential issues · weak spots · code smells",
   },
+  {
+    id: "skillmatch",
+    icon: "🧠",
+    label: "Skill Match",
+    description: "Match your skills against the repo · personalized entry points · what you can do right now",
+  },
 ];
 
 export function MainApp({ onIgnite, onClose, onMinimize }: MainAppProps) {
+  const { hasSkillProfile } = useSettings();
   const [url, setUrl] = useState("");
   const [mode, setMode] = useState<AnalysisMode>("documentation");
   const [focus, setFocus] = useState("");
@@ -56,7 +65,8 @@ export function MainApp({ onIgnite, onClose, onMinimize }: MainAppProps) {
       return;
     }
     setUrlError("");
-    onIgnite(trimmed, mode, focus.trim());
+    const skillProfile = mode === "skillmatch" ? storage.getSkillProfile() ?? undefined : undefined;
+    onIgnite(trimmed, mode, focus.trim(), skillProfile);
   }
 
   return (
@@ -132,45 +142,59 @@ export function MainApp({ onIgnite, onClose, onMinimize }: MainAppProps) {
           <label className="field-label">What should I cook?</label>
           <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
             {MODES.map((m) => (
-              <div
-                key={m.id}
-                className={`radio-card ${mode === m.id ? "is-selected" : ""}`}
-                onClick={() => setMode(m.id)}
-                role="radio"
-                aria-checked={mode === m.id}
-                tabIndex={0}
-                onKeyDown={(e) =>
-                  (e.key === "Enter" || e.key === " ") && setMode(m.id)
-                }
-              >
-                <div className="radio-dot">
-                  <div className="radio-dot-inner" />
-                </div>
-                <div>
-                  <div
-                    style={{
-                      color:
-                        mode === m.id
-                          ? "var(--color-ember-text)"
-                          : "var(--color-ember-muted)",
-                      fontSize: "13px",
-                      fontWeight: 600,
-                      marginBottom: "2px",
-                      transition: "color 0.2s",
-                    }}
-                  >
-                    {m.icon}&nbsp;&nbsp;{m.label}
+              <div key={m.id}>
+                <div
+                  className={`radio-card ${mode === m.id ? "is-selected" : ""}`}
+                  onClick={() => setMode(m.id)}
+                  role="radio"
+                  aria-checked={mode === m.id}
+                  tabIndex={0}
+                  onKeyDown={(e) =>
+                    (e.key === "Enter" || e.key === " ") && setMode(m.id)
+                  }
+                >
+                  <div className="radio-dot">
+                    <div className="radio-dot-inner" />
                   </div>
-                  <div
-                    style={{
-                      color: "var(--color-ember-dim)",
-                      fontSize: "11px",
-                      lineHeight: "1.5",
-                    }}
-                  >
-                    {m.description}
+                  <div style={{ flex: 1 }}>
+                    <div
+                      style={{
+                        color:
+                          mode === m.id
+                            ? "var(--color-ember-text)"
+                            : "var(--color-ember-muted)",
+                        fontSize: "13px",
+                        fontWeight: 600,
+                        marginBottom: "2px",
+                        transition: "color 0.2s",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 6,
+                      }}
+                    >
+                      {m.icon}&nbsp;&nbsp;{m.label}
+                      {m.id === "skillmatch" && hasSkillProfile && (
+                        <span style={{ fontSize: 9, letterSpacing: "0.08em", color: "#4ADE80", border: "1px solid rgba(74,222,128,0.4)", borderRadius: 3, padding: "1px 5px" }}>
+                          PROFILE SET
+                        </span>
+                      )}
+                    </div>
+                    <div
+                      style={{
+                        color: "var(--color-ember-dim)",
+                        fontSize: "11px",
+                        lineHeight: "1.5",
+                      }}
+                    >
+                      {m.description}
+                    </div>
                   </div>
                 </div>
+                {m.id === "skillmatch" && mode === "skillmatch" && !hasSkillProfile && (
+                  <div style={{ marginTop: 4, padding: "7px 10px", background: "rgba(255,140,0,0.06)", border: "1px solid rgba(255,140,0,0.2)", borderRadius: 4, fontSize: 11, color: "var(--color-ember-muted)", lineHeight: 1.6 }}>
+                    ⚠ No skill profile set. Open <strong style={{ color: "var(--color-ember-amber)" }}>⚙ Settings → Set My Skills</strong> first for a personalized report.
+                  </div>
+                )}
               </div>
             ))}
           </div>

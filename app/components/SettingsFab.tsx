@@ -3,20 +3,18 @@
 import { useEffect, useRef, useState } from "react";
 import { KeyWindow } from "./KeyWindow";
 import { ModelPickerWindow } from "./ModelPickerWindow";
+import { SkillsModal } from "./SkillsModal";
 import { storage } from "@/app/lib/storage";
+import { useSettings } from "@/app/lib/settings-store";
 
 export function SettingsFab() {
+  const { hasGeminiKey, hasSkillProfile, setHasGeminiKey, setHasSkillProfile } = useSettings();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [geminiOpen, setGeminiOpen] = useState(false);
   const [githubOpen, setGithubOpen] = useState(false);
   const [modelOpen, setModelOpen] = useState(false);
-  const [hasGeminiKey, setHasGeminiKey] = useState(false);
+  const [skillsOpen, setSkillsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
-
-  // Read key state once on mount (client-only)
-  useEffect(() => {
-    setHasGeminiKey(storage.hasApiKey());
-  }, []);
 
   /* Close dropdown when clicking outside */
   useEffect(() => {
@@ -43,6 +41,11 @@ export function SettingsFab() {
     if (!hasGeminiKey) return;
     setDropdownOpen(false);
     setModelOpen(true);
+  }
+
+  function openSkills() {
+    setDropdownOpen(false);
+    setSkillsOpen(true);
   }
 
   return (
@@ -123,6 +126,12 @@ export function SettingsFab() {
               disabled={!hasGeminiKey}
               disabledHint="Add a Gemini key first"
             />
+            <DropdownItem
+              icon={hasSkillProfile ? "🧠" : "🌱"}
+              label={hasSkillProfile ? "Edit My Skills" : "Set My Skills"}
+              onClick={openSkills}
+              divider
+            />
           </div>
         )}
       </div>
@@ -138,7 +147,10 @@ export function SettingsFab() {
             if (!v.trim().startsWith("AIza")) return "Should start with 'AIza'.";
             return null;
           }}
-          onSave={(v) => storage.setApiKey(v)}
+          onSave={(v) => {
+            storage.setApiKey(v);
+            setHasGeminiKey(true);
+          }}
           onClose={() => setGeminiOpen(false)}
           helpLink={{
             href: "https://aistudio.google.com/app/apikey",
@@ -170,6 +182,13 @@ export function SettingsFab() {
             href: "https://github.com/settings/tokens",
             text: "Create one at GitHub Settings →",
           }}
+        />
+      )}
+
+      {skillsOpen && (
+        <SkillsModal
+          onClose={() => setSkillsOpen(false)}
+          onSaved={() => setHasSkillProfile(true)}
         />
       )}
     </>

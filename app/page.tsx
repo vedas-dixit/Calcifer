@@ -12,7 +12,8 @@ import { SettingsFab } from "@/app/components/SettingsFab";
 import { Toaster } from "@/app/components/Toaster";
 import { FireworksOverlay } from "@/app/components/FireworksOverlay";
 import { Dock } from "@/app/components/Dock";
-import type { AnalysisMode, AgentResult, AgentProgress } from "@/app/lib/types";
+import { useSettings } from "@/app/lib/settings-store";
+import type { AnalysisMode, AgentResult, AgentProgress, SkillProfile } from "@/app/lib/types";
 
 const LAST_RESULT_KEY = "CALCIFER_LAST_RESULT";
 
@@ -33,6 +34,7 @@ interface Windows {
 }
 
 export default function Home() {
+  const { setHasGeminiKey } = useSettings();
   const [state, setState] = useState<AppState>({ phase: "loading", needsSetup: false });
   const [windows, setWindows] = useState<Windows>({ mission: false, progress: false, report: false });
   const initialised = useRef(false);
@@ -73,9 +75,10 @@ export default function Home() {
 
   function handleKeySet() {
     setState((prev) => ({ ...prev, needsSetup: false }));
+    setHasGeminiKey(true);
   }
 
-  function handleIgnite(url: string, mode: AnalysisMode, focus: string) {
+  function handleIgnite(url: string, mode: AnalysisMode, focus: string, skillProfile?: SkillProfile) {
     setState((prev) => ({ ...prev, phase: "processing", progress: undefined, progressError: undefined }));
     setWindows({ mission: false, progress: true, report: false });
 
@@ -83,6 +86,7 @@ export default function Home() {
       url,
       mode,
       focus,
+      skillProfile,
       onProgress: (progress) => {
         setState((prev) => ({ ...prev, progress }));
       },
