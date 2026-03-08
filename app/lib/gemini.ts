@@ -84,7 +84,7 @@ export async function runAgentLoop(config: AgentLoopConfig): Promise<string> {
     if (!calls || calls.length === 0) {
       const text = response.response.text();
       if (text.trim()) return text;
-      throw new Error("EMBERCORE went silent — no report produced. Please try again.");
+      throw new Error("CALCIFER went silent — no report produced. Please try again.");
     }
 
     // Process read_files calls (model may batch multiple in one turn)
@@ -160,5 +160,5 @@ export async function runAgentLoop(config: AgentLoopConfig): Promise<string> {
     response = await chat.sendMessage(responseParts);
   }
 
-  throw new Error("EMBERCORE exhausted all rounds without a report. Try a more focused analysis.");
+  throw new Error("CALCIFER exhausted all rounds without a report. Try a more focused analysis.");
 }

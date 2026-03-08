@@ -11,12 +11,14 @@ interface ProgressViewProps {
   live?: AgentProgress;
   /** Called after the mock animation completes (demo mode). */
   onMockComplete?: () => void;
+  onClose?: () => void;
+  onMinimize?: () => void;
 }
 
 /* Time between each step appearing (ms) — feels snappy but not instant */
 const STEP_DELAY = 900;
 
-export function ProgressView({ live, onMockComplete }: ProgressViewProps) {
+export function ProgressView({ live, onMockComplete, onClose, onMinimize }: ProgressViewProps) {
   const [visibleSteps, setVisibleSteps] = useState<StepLog[]>([]);
   const [percent, setPercent] = useState(0);
   const terminalRef = useRef<HTMLDivElement>(null);
@@ -75,6 +77,8 @@ export function ProgressView({ live, onMockComplete }: ProgressViewProps) {
       title="MISSION.LOG"
       variant="dark"
       defaultWidth={600}
+      onClose={onClose}
+      onMinimize={onMinimize}
       headerRight={
         <span
           style={{
@@ -108,7 +112,7 @@ export function ProgressView({ live, onMockComplete }: ProgressViewProps) {
               textTransform: "uppercase",
             }}
           >
-            EMBERCORE
+            CALCIFER
           </h2>
           <p
             style={{

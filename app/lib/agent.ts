@@ -90,7 +90,7 @@ export async function runAgent(opts: AgentOptions): Promise<AgentResult> {
 
   try {
     // ── Boot ──
-    tracker.push("boot", "> EMBERCORE.EXE — warming up", "→ Locking onto target...", 5);
+    tracker.push("boot", "> CALCIFER.EXE — warming up", "→ Locking onto target...", 5);
 
     // ── Parse URL ──
     tracker.push("parse", "> Parsing repository coordinates...", `→ Target: ${url}`, 10);
@@ -151,7 +151,7 @@ export async function runAgent(opts: AgentOptions): Promise<AgentResult> {
     // ── Agent loop — Gemini with function calling ──
     tracker.push(
       "agent",
-      "> EMBERCORE is on the move...",
+      "> CALCIFER is on the move...",
       "→ Studying the codebase map...",
       50
     );
