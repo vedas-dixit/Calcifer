@@ -3,7 +3,7 @@
 > *"I feel like I'm burning up from the inside."*
 > That's your codebase, every time someone new tries to understand it.
 
-**Calcifer** is an AI agent that reads a GitHub repo and actually tells you what's going on inside it — the architecture, the bugs, how to contribute, and whether you specifically have the skills to jump in.
+**Calcifer** is an AI agent(I think so, not sure 😅) that reads a GitHub repo and actually tells you what's going on inside it like the architecture, the bugs, how to contribute, and whether you specifically have the skills to jump in.
 
 Paste a URL. Pick a mode. Watch the fire think. Get a real, deep report.
 
@@ -53,18 +53,6 @@ Here's what Calcifer actually does under the hood:
 The key thing I tried to get right: **the agent decides what to read, not me.** I just give it the map and the mission. It follows the code wherever it leads — entry points to core modules to edge cases — exactly like a real engineer would.
 
 I spent a lot of time on the prompts too. Each mode has a different persona and a different report structure. The skill match prompt basically tells Gemini to act as a mentor who knows both the codebase *and* the developer's background. That one surprised me with how well it works.
-
----
-
-## Built with Claude
-
-I built Calcifer in collaboration with Claude. Every meaningful design decision — the agent loop architecture, the file scoring system, the symbol extraction, the prompt engineering — happened through conversations where I described what I wanted and Claude helped me figure out how to build it.
-
-This wasn't "Claude wrote it and I reviewed it." It was more like pairing with someone who knew the APIs better than I did but needed me to drive. The ideas were mine, the shape of the thing came from a lot of back-and-forth, and the final code is something I actually understand and can maintain.
-
-If you want to build something non-trivial with an AI and still feel like *you* built it — that's what this felt like.
-
----
 
 ## Tech Stack
 
@@ -148,9 +136,7 @@ app/
 
 ## The fire theme
 
-The retro macOS aesthetic wasn't an accident. I wanted something that felt like an old terminal — like you're running a command that actually *does* something. The fire is Calcifer from Howl's Moving Castle. A small spirit doing serious work, burning hot so the castle can move.
-
-That felt right.
+The retro macOS aesthetic wasn't an accident: vedasdixit.engineer. Idk why I love the old terminal,  like you're running a command that actually *does* something. The fire is Calcifer from Howl's Moving Castle. A small spirit doing work, burning hot so the castle can move or idk what but I love studio ghibli movies!
 
 ---
 
