@@ -10,6 +10,42 @@ Paste a URL. Pick a mode. Watch the fire think. Get a real, deep report.
 <img width="1051" height="583" alt="calcifer" src="https://github.com/user-attachments/assets/135fd767-0cb8-463f-8fb3-02ec70845cea" />
 
 
+## Screenshots
+
+> Replace each placeholder below with an actual screenshot. Suggested: macOS `Cmd+Shift+4`, drop files into `docs/screenshots/`, update the paths here.
+
+### Disclaimer — first-time welcome screen
+<!-- Replace with: docs/screenshots/disclaimer.png -->
+![Disclaimer modal](docs/screenshots/disclaimer.png)
+
+### Mission Config — paste a repo URL and pick a mode
+<!-- Replace with: docs/screenshots/mission-config.png -->
+![Mission config window](docs/screenshots/mission-config.png)
+
+### API Key Setup — Gemini + GitHub token input
+<!-- Replace with: docs/screenshots/api-key-modal.png -->
+![API key setup modal](docs/screenshots/api-key-modal.png)
+
+### Live Progress — terminal-style agent feed
+<!-- Replace with: docs/screenshots/progress-view.png -->
+![Progress terminal](docs/screenshots/progress-view.png)
+
+### Report Output — full markdown analysis
+<!-- Replace with: docs/screenshots/output-view.png -->
+![Output view — rendered markdown report](docs/screenshots/output-view.png)
+
+### Skill Match — 5-step skill profile builder
+
+| Step 1 · Experience | Step 2 · Languages | Step 3 · Frameworks |
+|---|---|---|
+| ![Step 1](docs/screenshots/skills-step-1.png) | ![Step 2](docs/screenshots/skills-step-2.png) | ![Step 3](docs/screenshots/skills-step-3.png) |
+
+| Step 4 · Domains | Step 5 · Goals |
+|---|---|
+| ![Step 4](docs/screenshots/skills-step-4.png) | ![Step 5](docs/screenshots/skills-step-5.png) |
+
+---
+
 ## What it actually does
 
 You've been there. You open a new GitHub repo, stare at 400 files, and have absolutely no idea where to start. Or you want to contribute to open source but can't figure out if you even have the right skills for it. Or you're doing a code review and need a second pair of eyes that doesn't get tired.
