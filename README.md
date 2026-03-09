@@ -146,15 +146,6 @@ The retro macOS aesthetic wasn't an accident: vedasdixit.engineer. Idk why I lov
 <!-- Replace with: docs/screenshots/api-key-modal.png -->
 <img width="2270" height="1734" alt="image" src="https://github.com/user-attachments/assets/abab4b24-efa5-4cfe-a52a-e805ff163971" />
 
-### Live Progress — terminal-style agent feed
-<!-- Replace with: docs/screenshots/progress-view.png -->
-<img width="2316" height="1860" alt="image" src="https://github.com/user-attachments/assets/88bdf3af-9b1e-45d6-8bae-7b1f82a80d75" />
-
-
-### Report Output — full markdown analysis
-<!-- Replace with: docs/screenshots/output-view.png -->
-<img width="2280" height="1850" alt="image" src="https://github.com/user-attachments/assets/3e01d575-e32f-4f68-9fb5-328d9b21d137" />
-
 ### Skill Match — 5-step skill profile builder
 
 | Step 1 · Experience |
@@ -168,6 +159,16 @@ The retro macOS aesthetic wasn't an accident: vedasdixit.engineer. Idk why I lov
 | Step 4 · Domains | Step 5 · Goals |
 |---|---|
 | ![Step 4](https://github.com/user-attachments/assets/80de45c9-de92-4047-ac14-bb78e382b07d) | ![Step 5](https://github.com/user-attachments/assets/3dfdda8d-e7f3-4400-9be2-43a7fa951ae0) |
+
+
+### Live Progress — terminal-style agent feed
+<!-- Replace with: docs/screenshots/progress-view.png -->
+<img width="2316" height="1860" alt="image" src="https://github.com/user-attachments/assets/88bdf3af-9b1e-45d6-8bae-7b1f82a80d75" />
+
+
+### Report Output — full markdown analysis
+<!-- Replace with: docs/screenshots/output-view.png -->
+<img width="2280" height="1850" alt="image" src="https://github.com/user-attachments/assets/3e01d575-e32f-4f68-9fb5-328d9b21d137" />
 
 ---
 
