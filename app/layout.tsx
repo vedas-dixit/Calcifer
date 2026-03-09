@@ -77,10 +77,6 @@ export const metadata: Metadata = {
     images: [`${BASE_URL}/og-image.png`],
     creator: "@vedasdixit",
   },
-  icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-  },
   category: "technology",
 };
 
